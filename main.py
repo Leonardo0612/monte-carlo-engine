@@ -26,16 +26,13 @@ def price_european_call_mc(paths, K, r, T):
 def price_antithetic_call_mc(paths, K, r, T):
     ST = paths[:, -1]
     payoffs = np.maximum(ST - K, 0)
-    
-    # 1. Split into the original half and the mirrored (-Z) half
+
     half_sims = len(ST) // 2
     payoffs_orig = payoffs[:half_sims]
     payoffs_anti = payoffs[half_sims:]
-    
-    # 2. Average each mirrored pair together FIRST
+
     paired_payoffs = (payoffs_orig + payoffs_anti) / 2.0
-    
-    # 3. Calculate price and correct standard error across pairs
+
     call_price = np.exp(-r * T) * np.mean(paired_payoffs)
     std_error = (np.exp(-r * T) * np.std(paired_payoffs)) / np.sqrt(half_sims)
     
